@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mychatbot</title>
+</head>
+<body>
+    <h1 id="greet">hi, whats up?</h1>
+    <textarea name="" id="prompt" placeholder="enter your prompt"></textarea>
+    <button id="send">Send</button>
+    <div id="response" class="response"></div>
+    <script>
+        document.getElementById('send').addEventListener('click', async () => {
+            const prompt = document.getElementById('prompt').value.trim();
+            const response = document.getElementById('response');
+
+            if(!prompt){
+                response.textContent = 'Please enter prompt';
+                return;
+            }
+            response.textContent = 'thinking...';
+            try{
+                const res =   await fetch('/prompt', {
+                    method: 'POST',
+                    headers: {'Content-type':'application/json'},
+                    body: JSON.stringify({prompt})
+                })
+
+                const data = await res.json();
+                if(data.error){
+                    response.textContent = "error:"+data.error
+                }else{
+                    response.textContent = data.answer
+                }
+            }catch(err){
+                response.textContent = 'error: ' + err.message;
+            }
+        })
+    </script>
+</body>
+</html>

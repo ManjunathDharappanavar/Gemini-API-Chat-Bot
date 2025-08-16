@@ -1,12 +1,18 @@
 import dotenv from 'dotenv';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';   
+
 dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
-const port = 3000;
+const port = 4000;
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname)))
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.post('/prompt', async (req, res)=>{
@@ -27,6 +33,8 @@ app.post('/prompt', async (req, res)=>{
         return res.status(500).json({error: 'internal server error'})
    }
 })
+
+
 
 app.listen(port, ()=>{
     console.log(`Server is running on http://localhost:${port}`);
